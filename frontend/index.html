@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoQuoter - Generate Beautiful Quote Images</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="theme-toggle-container">
+                <span class="theme-label">Light</span>
+                <label class="theme-toggle">
+                    <input type="checkbox" id="theme-toggle-checkbox">
+                    <span class="slider round"></span>
+                </label>
+                <span class="theme-label">Dark</span>
+            </div>
+            <h1>AutoQuoter</h1>
+            <p>Generate beautiful quote images for social media</p>
+        </header>
+        
+        <main>
+            <div class="quota-counter">
+                <span id="quota-count">5</span> free quotes remaining
+                <button id="upgrade-btn" class="premium-btn">Upgrade to Premium</button>
+            </div>
+            
+            <div class="quote-generator">
+                <div class="controls">
+                    <div class="control-group">
+                        <label for="theme">Select Quote Theme:</label>
+                        <select id="theme" name="theme">
+                            <option value="motivation">Motivation</option>
+                            <option value="stoicism">Stoicism</option>
+                            <option value="success">Success</option>
+                            <option value="leadership">Leadership</option>
+                            <option value="happiness">Happiness</option>
+                        </select>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label for="custom-quote">Or Enter Your Own Quote:</label>
+                        <textarea id="custom-quote" name="custom-quote" placeholder="Enter your own quote (optional)"></textarea>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>
+                            <input type="checkbox" id="removeWatermark" name="removeWatermark" disabled>
+                            Remove Watermark (Premium Feature)
+                        </label>
+                    </div>
+                    
+                    <div class="buttons">
+                        <button id="generate-btn" class="primary-btn">Generate Quote</button>
+                    </div>
+                </div>
+                
+                <div class="preview-container">
+                    <div id="placeholder" class="preview-placeholder">
+                        <div class="placeholder-icon">📷</div>
+                        <p>Your generated quote will appear here</p>
+                        <p class="placeholder-hint">Choose a theme and click "Generate Quote"</p>
+                    </div>
+                    <img id="preview" src="" alt="Generated quote will appear here" class="hidden">
+                    <div id="loading" class="hidden">Generating your quote...</div>
+                    <button id="download-btn" class="secondary-btn" disabled>Download Image</button>
+                </div>
+            </div>
+            
+            <div class="quote-text-container hidden" id="quote-text-container">
+                <h3>Copy Quote Text</h3>
+                <div class="quote-text-box">
+                    <p id="quote-text"></p>
+                    <p id="quote-author" class="quote-author"></p>
+                </div>
+                <button id="copy-quote-btn" class="secondary-btn">Copy to Clipboard</button>
+            </div>
+            
+            <div class="usage-info">
+                <p>Free tier: 5 quotes/day with watermark</p>
+                <p>Need more? <a href="#" id="upgrade-link">Upgrade to Premium</a></p>
+            </div>
+        </main>
+        
+        <footer>
+            <p>&copy; 2025 AutoQuoter. All rights reserved.</p>
+        </footer>
+    </div>
+    
+    <!-- Premium Upgrade Modal -->
+    <div id="premium-modal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="modal-header">
+                <h2>Upgrade to Premium</h2>
+                <p>Enjoy unlimited quotes without watermarks for just ₹299/month</p>
+            </div>
+            
+            <div class="premium-features">
+                <div class="feature">
+                    <div class="feature-icon">♾️</div>
+                    <h3>Unlimited Quotes</h3>
+                    <p>Generate as many quotes as you need</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🏷️</div>
+                    <h3>No Watermarks</h3>
+                    <p>Clean, professional images for your brand</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🎨</div>
+                    <h3>Premium Backgrounds</h3>
+                    <p>Access to exclusive design templates</p>
+                </div>
+            </div>
+            
+            <div class="payment-options">
+                <h3>Select Payment Method</h3>
+                <div class="payment-methods">
+                    <div class="payment-method active" data-method="upi">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/UPI-Logo-vector.svg/1200px-UPI-Logo-vector.svg.png" alt="UPI" class="payment-icon">
+                        <span>UPI</span>
+                    </div>
+                    <div class="payment-method" data-method="paytm">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Paytm_Logo_%28standalone%29.svg/2560px-Paytm_Logo_%28standalone%29.svg.png" alt="Paytm" class="payment-icon">
+                        <span>Paytm</span>
+                    </div>
+                    <div class="payment-method" data-method="card">
+                        <img src="https://www.svgrepo.com/show/448994/credit-card.svg" alt="Card" class="payment-icon">
+                        <span>Card</span>
+                    </div>
+                </div>
+                
+                <!-- UPI Payment Form -->
+                <div class="payment-form" id="upi-form">
+                    <div class="upi-qr">
+                        <div class="qr-placeholder">
+                            <div class="qr-lines"></div>
+                            <div class="qr-logo">UPI</div>
+                        </div>
+                        <p>Scan with any UPI app</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="upi-id">Or enter UPI ID</label>
+                        <input type="text" id="upi-id" placeholder="yourname@upi">
+                    </div>
+                    <button class="primary-btn pay-btn">Pay ₹299</button>
+                </div>
+                
+                <!-- Paytm Payment Form -->
+                <div class="payment-form hidden" id="paytm-form">
+                    <div class="form-group">
+                        <label for="paytm-number">Paytm Mobile Number</label>
+                        <input type="text" id="paytm-number" placeholder="Enter 10-digit mobile number">
+                    </div>
+                    <button class="primary-btn pay-btn">Pay with Paytm</button>
+                </div>
+                
+                <!-- Card Payment Form -->
+                <div class="payment-form hidden" id="card-form">
+                    <div class="form-group">
+                        <label for="card-number">Card Number</label>
+                        <input type="text" id="card-number" placeholder="1234 5678 9012 3456">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="expiry">Expiry</label>
+                            <input type="text" id="expiry" placeholder="MM/YY">
+                        </div>
+                        <div class="form-group">
+                            <label for="cvv">CVV</label>
+                            <input type="text" id="cvv" placeholder="123">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="card-name">Name on Card</label>
+                        <input type="text" id="card-name" placeholder="John Doe">
+                    </div>
+                    <button class="primary-btn pay-btn">Pay ₹299</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Quota Limit Modal -->
+    <div id="quota-limit-modal" class="modal hidden">
+        <div class="modal-content quota-alert">
+            <span class="close-modal">&times;</span>
+            <div class="quota-icon">⚠️</div>
+            <h2>Daily Quota Reached</h2>
+            <p>You've used all 5 of your free quotes for today.</p>
+            <p>Upgrade to premium for unlimited quotes and no watermarks!</p>
+            <button id="quota-upgrade-btn" class="primary-btn">Upgrade to Premium</button>
+        </div>
+    </div>
+    
+    <!-- Payment Success Modal -->
+    <div id="payment-success-modal" class="modal hidden">
+        <div class="modal-content success-modal">
+            <span class="close-modal">&times;</span>
+            <div class="success-icon">✅</div>
+            <h2>Payment Successful!</h2>
+            <p>Welcome to AutoQuoter Premium!</p>
+            <p>You now have unlimited quotes without watermarks.</p>
+            <button id="success-continue-btn" class="primary-btn">Continue</button>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
